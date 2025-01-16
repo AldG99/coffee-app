@@ -88,7 +88,7 @@ const HomeScreens = () => {
           </Text>
         </View>
         <SearchField />
-        <Categories />
+        <Categories onChange={id => setActiveCategoryId(id)} />
         <View
           style={{
             flexDirection: 'row',
@@ -96,113 +96,127 @@ const HomeScreens = () => {
             justifyContent: 'space-between',
           }}
         >
-          {coffees.map(coffee => (
-            <View
-              key={coffee.id}
-              style={{
-                width: width / 2 - SPACING * 2,
-                marginBottom: SPACING,
-                borderRadius: SPACING * 2,
-                overflow: 'hidden',
-              }}
-            >
-              <BlurView tint="dark" intensity={95} style={{ padding: SPACING }}>
-                <TouchableOpacity style={{ height: 150, width: '100%' }}>
-                  <Image
-                    source={coffee.image}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: SPACING * 2,
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: 0,
-                      borderBottomStartRadius: SPACING * 3,
-                      borderTopEndRadius: SPACING * 2,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <BlurView
-                      tint="dark"
-                      intensity={70}
-                      style={{ flexDirection: 'row', padding: SPACING - 2 }}
-                    >
-                      <Ionicons
-                        style={{ marginLeft: SPACING / 2 }}
-                        name="start"
-                        color={colors.primary}
-                        size={SPACING * 1.7}
-                      />
-                      <Text
-                        style={{ color: colors.white, marginLeft: SPACING / 2 }}
-                      >
-                        {coffee.rating}
-                      </Text>
-                    </BlurView>
-                  </View>
-                </TouchableOpacity>
-                <Text
-                  numberOfLines={2}
-                  style={{
-                    color: colors.white,
-                    fontWeight: '600',
-                    fontSize: SPACING * 1.7,
-                    marginTop: SPACING,
-                    marginBottom: SPACING / 2,
-                  }}
+          {coffees
+            .filter(coffee => {
+              if (activeCategoryId === null) {
+                return true;
+              }
+              return coffee.categoryId === activeCategoryId;
+            })
+            .map(coffee => (
+              <View
+                key={coffee.id}
+                style={{
+                  width: width / 2 - SPACING * 2,
+                  marginBottom: SPACING,
+                  borderRadius: SPACING * 2,
+                  overflow: 'hidden',
+                }}
+              >
+                <BlurView
+                  tint="dark"
+                  intensity={95}
+                  style={{ padding: SPACING }}
                 >
-                  {coffee.name}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ color: colors.secondary, fontSize: SPACING * 1.2 }}
-                >
-                  {coffee.included}
-                </Text>
-                <View
-                  style={{
-                    marginVertical: SPACING / 2,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}
-                >
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text
+                  <TouchableOpacity style={{ height: 150, width: '100%' }}>
+                    <Image
+                      source={coffee.image}
                       style={{
-                        color: colors.primary,
-                        marginRight: SPACING / 2,
-                        fontSize: SPACING * 1.6,
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: SPACING * 2,
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        borderBottomStartRadius: SPACING * 3,
+                        borderTopEndRadius: SPACING * 2,
+                        overflow: 'hidden',
                       }}
                     >
-                      $
-                    </Text>
-                    <Text
-                      style={{ color: colors.white, fontSize: SPACING * 1.6 }}
-                    >
-                      {coffee.price}
-                    </Text>
-                  </View>
-                  <TouchableOpacity
+                      <BlurView
+                        tint="dark"
+                        intensity={70}
+                        style={{ flexDirection: 'row', padding: SPACING - 2 }}
+                      >
+                        <Ionicons
+                          style={{ marginLeft: SPACING / 2 }}
+                          name="start"
+                          color={colors.primary}
+                          size={SPACING * 1.7}
+                        />
+                        <Text
+                          style={{
+                            color: colors.white,
+                            marginLeft: SPACING / 2,
+                          }}
+                        >
+                          {coffee.rating}
+                        </Text>
+                      </BlurView>
+                    </View>
+                  </TouchableOpacity>
+                  <Text
+                    numberOfLines={2}
                     style={{
-                      backgroundColor: colors.primary,
-                      padding: SPACING / 2,
-                      borderRadius: SPACING,
+                      color: colors.white,
+                      fontWeight: '600',
+                      fontSize: SPACING * 1.7,
+                      marginTop: SPACING,
+                      marginBottom: SPACING / 2,
                     }}
                   >
-                    <Ionicons
-                      name="add"
-                      size={SPACING * 2}
-                      color={colors.white}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </BlurView>
-            </View>
-          ))}
+                    {coffee.name}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{ color: colors.secondary, fontSize: SPACING * 1.2 }}
+                  >
+                    {coffee.included}
+                  </Text>
+                  <View
+                    style={{
+                      marginVertical: SPACING / 2,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text
+                        style={{
+                          color: colors.primary,
+                          marginRight: SPACING / 2,
+                          fontSize: SPACING * 1.6,
+                        }}
+                      >
+                        $
+                      </Text>
+                      <Text
+                        style={{ color: colors.white, fontSize: SPACING * 1.6 }}
+                      >
+                        {coffee.price}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: colors.primary,
+                        padding: SPACING / 2,
+                        borderRadius: SPACING,
+                      }}
+                    >
+                      <Ionicons
+                        name="add"
+                        size={SPACING * 2}
+                        color={colors.white}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </BlurView>
+              </View>
+            ))}
         </View>
       </ScrollView>
     </SafeAreaView>
