@@ -13,13 +13,18 @@ import { Ionicons } from '@expo/vector-icons';
 import colors from '../config/colors';
 import SPACING from '../config/SPACING';
 import { BlurView } from 'expo-blur';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const { height, width } = Dimensions.get('window');
 
 const sizes = ['P', 'M', 'G'];
 
-const CoffeeDetailsScreen = ({ coffee }) => {
+const CoffeeDetailsScreen = () => {
   const [activeSize, setActiveSize] = useState(null);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { coffee } = route.params;
+
   return (
     <>
       <ScrollView>
@@ -45,6 +50,7 @@ const CoffeeDetailsScreen = ({ coffee }) => {
                   padding: SPACING,
                   borderRadius: SPACING * 1.5,
                 }}
+                onPress={() => navigation.goBack()}
               >
                 <Ionicons
                   name="arrow-back"
