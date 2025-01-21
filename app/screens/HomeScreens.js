@@ -16,6 +16,7 @@ import colors from '../config/colors';
 import SearchField from '../components/SearchField';
 import Categories from '../components/Categories';
 import coffees from '../config/coffees';
+import { useNavigation } from '@react-navigation/native';
 
 const avatar = require('../../assets/avatar.png');
 
@@ -23,6 +24,7 @@ const { width } = Dimensions.get('window');
 
 const HomeScreens = () => {
   const [activeCategoryId, setActiveCategoryId] = useState(null);
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView>
@@ -118,7 +120,12 @@ const HomeScreens = () => {
                   intensity={95}
                   style={{ padding: SPACING }}
                 >
-                  <TouchableOpacity style={{ height: 150, width: '100%' }}>
+                  <TouchableOpacity
+                    style={{ height: 150, width: '100%' }}
+                    onPress={() =>
+                      navigation.navigate('CoffeeDetails', { coffee })
+                    }
+                  >
                     <Image
                       source={coffee.image}
                       style={{
@@ -143,7 +150,7 @@ const HomeScreens = () => {
                       >
                         <Ionicons
                           style={{ marginLeft: SPACING / 2 }}
-                          name="start"
+                          name="star"
                           color={colors.primary}
                           size={SPACING * 1.7}
                         />
