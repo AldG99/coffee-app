@@ -1,15 +1,27 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, View } from 'react-native';
 import colors from './app/config/colors';
 import HomeScreens from './app/screens/HomeScreens';
 import CoffeeDetailsScreen from './app/screens/CoffeeDetailsScreen';
-import coffees from './app/config/coffees';
+
+const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.dark }}>
-      <CoffeeDetailsScreen coffee={coffees[2]} />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.dark },
+        }}
+      >
+        <Stack.Screen name="Home" component={HomeScreens} />
+        <Stack.Screen name="CoffeeDetails" component={CoffeeDetailsScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
