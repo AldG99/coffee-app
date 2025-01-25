@@ -1,14 +1,19 @@
-import { BlurView } from 'expo-blur';
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
 import colors from '../config/colors';
 import SPACING from '../config/SPACING';
 
-import { Ionicons } from '@expo/vector-icons';
-
-const SearchField = () => {
+const SearchField = ({ onSearch }) => {
   return (
-    <View style={{ borderRadius: SPACING, overflow: 'hidden' }}>
+    <View
+      style={{
+        borderRadius: SPACING,
+        overflow: 'hidden',
+        marginBottom: SPACING,
+      }}
+    >
       <BlurView
         intensity={30}
         style={{ alignItems: 'center', justifyContent: 'center' }}
@@ -23,6 +28,7 @@ const SearchField = () => {
           }}
           placeholder="Encuentra tu café..."
           placeholderTextColor={colors.light}
+          onChangeText={onSearch}
         />
         <Ionicons
           style={{ position: 'absolute', left: SPACING }}
@@ -36,5 +42,3 @@ const SearchField = () => {
 };
 
 export default SearchField;
-
-const styles = StyleSheet.create({});
