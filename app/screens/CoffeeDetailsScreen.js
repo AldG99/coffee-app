@@ -14,16 +14,29 @@ import colors from '../config/colors';
 import SPACING from '../config/SPACING';
 import { BlurView } from 'expo-blur';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useCart } from '../context/CartContext';
 
 const { height, width } = Dimensions.get('window');
 
 const sizes = ['P', 'M', 'G'];
 
 const CoffeeDetailsScreen = () => {
-  const [activeSize, setActiveSize] = useState(null);
+  const [activeSize, setActiveSize] = useState('M');
   const navigation = useNavigation();
   const route = useRoute();
   const { coffee } = route.params;
+  const { addToCart } = useCart();
+
+  const sizePrices = {
+    P: 0.8, // Small size, slight discount
+    M: 1.0, // Medium size, base price
+    G: 1.3, // Large size, premium
+  };
+
+  // Calculate dynamic price based on size
+  const calculateSizePrice = () => {
+    return (coffee.price * sizePrices[activeSize]).toFixed(2);
+  };
 
   return (
     <>
@@ -223,10 +236,10 @@ const CoffeeDetailsScreen = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                {sizes.map((size, index) => (
+                {sizes.map(size => (
                   <TouchableOpacity
                     onPress={() => setActiveSize(size)}
-                    key={index}
+                    key={size}
                     style={[
                       {
                         borderWidth: 2,
@@ -236,7 +249,7 @@ const CoffeeDetailsScreen = () => {
                         width: width / 3 - SPACING * 2,
                         alignItems: 'center',
                       },
-                      activeSize == size && {
+                      activeSize === size && {
                         borderColor: colors.primary,
                         backgroundColor: colors.dark,
                       },
@@ -274,7 +287,7 @@ const CoffeeDetailsScreen = () => {
           }}
         >
           <Text style={{ color: colors.white, fontSize: SPACING * 1.5 }}>
-            Precio
+            Precio ({activeSize})
           </Text>
           <View style={{ flexDirection: 'row' }}>
             <Text style={{ color: colors.primary, fontSize: SPACING * 2 }}>
@@ -287,7 +300,7 @@ const CoffeeDetailsScreen = () => {
                 marginLeft: SPACING / 2,
               }}
             >
-              {coffee.price}
+              {calculateSizePrice()}
             </Text>
           </View>
         </View>
@@ -300,6 +313,14 @@ const CoffeeDetailsScreen = () => {
             alignItems: 'center',
             borderRadius: SPACING * 2,
             fontWeight: '700',
+          }}
+          onPress={() => {
+            addToCart({
+              ...coffee,
+              size: activeSize,
+              price: calculateSizePrice(), // Use the size-specific price
+            });
+            navigation.navigate('Cart');
           }}
         >
           <Text style={{ color: colors.white, fontSize: SPACING * 2 }}>
