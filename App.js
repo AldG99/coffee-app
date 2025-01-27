@@ -1,27 +1,32 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import colors from './app/config/colors';
 import HomeScreens from './app/screens/HomeScreens';
 import CoffeeDetailsScreen from './app/screens/CoffeeDetailsScreen';
+import CartScreen from './app/screens/CartScreen';
+import { CartProvider } from './app/context/CartContext';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.dark },
-        }}
-      >
-        <Stack.Screen name="Home" component={HomeScreens} />
-        <Stack.Screen name="CoffeeDetails" component={CoffeeDetailsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <CartProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.dark },
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreens} />
+          <Stack.Screen name="CoffeeDetails" component={CoffeeDetailsScreen} />
+          <Stack.Screen name="Cart" component={CartScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </CartProvider>
   );
 };
 
