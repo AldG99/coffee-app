@@ -18,6 +18,7 @@ import Categories from '../components/Categories';
 import coffees from '../config/coffees';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
+import CustomDrawer from '../components/CustomDrawer';
 
 const avatar = require('../../assets/avatar.png');
 const { width } = Dimensions.get('window');
@@ -27,6 +28,7 @@ const HomeScreens = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
   const { addToCart } = useCart();
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const filterCoffees = () => {
     return coffees.filter(coffee => {
@@ -56,6 +58,7 @@ const HomeScreens = () => {
               height: SPACING * 4,
               borderRadius: SPACING,
             }}
+            onPress={() => setIsMenuVisible(true)}
           >
             <BlurView
               style={{
@@ -229,6 +232,10 @@ const HomeScreens = () => {
           ))}
         </View>
       </ScrollView>
+      <CustomDrawer
+        isVisible={isMenuVisible}
+        onClose={() => setIsMenuVisible(false)}
+      />
     </SafeAreaView>
   );
 };
