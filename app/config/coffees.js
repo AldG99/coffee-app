@@ -2,7 +2,7 @@ export default [
   {
     id: 1,
     name: 'Cappuccino',
-    image: require('../../assets/coffees/nathan-dumlao-c2Y16tC3yO8-unsplash.jpg'),
+    image: require('../../assets/coffees/pexels-chevanon-302904.jpg'),
     price: '2.00',
     description:
       'El cappuccino es una bebida de café hecha con espresso y leche caliente. Tradicionalmente se prepara con leche vaporizada y se adorna con una pequeña cantidad de espuma.',
@@ -13,18 +13,18 @@ export default [
   {
     id: 2,
     name: 'Espresso',
-    image: require('../../assets/coffees/nathan-dumlao-ikU3J1nr52w-unsplash.jpg'),
+    image: require('../../assets/coffees/pexels-valeriiamiller-3020919.jpg'),
     price: '4.01',
     description:
       'El espresso es una bebida de café fuerte, con cuerpo y concentrado, hecha con granos de café tostados y agua caliente.',
-    categoryId: 1,
+    categoryId: 2,
     rating: 4.8,
     included: 'Doble shot',
   },
   {
     id: 3,
     name: 'Latte',
-    image: require('../../assets/coffees/nathan-dumlao-nBJHO6wmRWw-unsplash.jpg'),
+    image: require('../../assets/coffees/pexels-lorencastillo-9146638.jpg'),
     price: '3.05',
     description:
       'El latte es una bebida de café hecha con espresso y leche vaporizada, con una textura suave y cremosa.',
@@ -35,7 +35,7 @@ export default [
   {
     id: 4,
     name: 'Flat White',
-    image: require('../../assets/coffees/robbie-down-LI8inyHnm_A-unsplash.jpg'),
+    image: require('../../assets/coffees/pexels-esma-ozer-49564007-12885158.jpg'),
     price: '3.00',
     description:
       'El flat white es una bebida de café hecha con espresso y leche vaporizada, con una capa ligera de microespuma.',
@@ -45,28 +45,6 @@ export default [
   },
   {
     id: 5,
-    name: 'Cappuccino',
-    image: require('../../assets/coffees/fahmi-fakhrudin-nzyzAUsbV0M-unsplash.jpg'),
-    price: '4.00',
-    description:
-      'El cappuccino es una bebida de café hecha con espresso y leche caliente, decorado con cacao en polvo.',
-    categoryId: 2,
-    rating: 4.5,
-    included: 'Con cacao en polvo',
-  },
-  {
-    id: 6,
-    name: 'Espresso',
-    image: require('../../assets/coffees/taylor-franz-GJogrGZxKJE-unsplash.jpg'),
-    price: '5.00',
-    description:
-      'El espresso es una bebida concentrada, preparada rápidamente con granos de café recién molidos.',
-    categoryId: 2,
-    rating: 4.7,
-    included: 'Ristretto',
-  },
-  {
-    id: 7,
     name: 'Iced Latte',
     image: require('../../assets/coffees/pexels-rodrigo-ortega-2044210904-29173448.jpg'),
     price: '3.50',
@@ -77,36 +55,102 @@ export default [
     included: 'Con sirope de caramelo',
   },
   {
-    id: 8,
+    id: 6,
     name: 'Macchiato',
     image: require('../../assets/coffees/pexels-mikegz-400576129-18424335.jpg'),
     price: '3.75',
     description:
       'El macchiato es un espresso con una pequeña cantidad de leche espumada, perfecto para quienes buscan un sabor fuerte.',
-    categoryId: 1,
+    categoryId: 6,
     rating: 4.8,
     included: 'Con espuma de leche',
   },
   {
-    id: 9,
+    id: 7,
     name: 'Cappuccino Mocha',
     image: require('../../assets/coffees/pexels-wulfranodelangel-28366976.jpg'),
     price: '4.50',
     description:
       'El cappuccino mocha es una combinación de espresso, leche vaporizada y chocolate, decorado con crema batida.',
-    categoryId: 2,
+    categoryId: 5,
     rating: 4.9,
     included: 'Con crema batida',
   },
   {
-    id: 10,
+    id: 8,
     name: 'Cold Brew',
     image: require('../../assets/coffees/pexels-marta-dzedyshko-1042863-2067404.jpg'),
     price: '3.25',
     description:
       'El cold brew es un café preparado en frío durante varias horas, resultando en un sabor suave y menos ácido.',
-    categoryId: 1,
+    categoryId: 12,
     rating: 4.7,
     included: 'Con leche de coco',
+  },
+  {
+    id: 9,
+    name: 'Americano',
+    image: require('../../assets/coffees/pexels-vovaflame-3704460.jpg'),
+    price: '2.50',
+    description:
+      'El americano es un café diluido que combina espresso con agua caliente, ofreciendo un sabor suave.',
+    categoryId: 7,
+    rating: 4.3,
+    included: 'Sin leche',
+  },
+  {
+    id: 10,
+    name: 'Ristretto',
+    image: require('../../assets/coffees/pexels-bertellifotografia-29253460.jpg'),
+    price: '2.75',
+    description:
+      'El ristretto es un espresso más corto y concentrado, con un sabor intenso y menos amargor.',
+    categoryId: 8,
+    rating: 4.9,
+    included: 'Sabor intenso',
+  },
+  {
+    id: 11,
+    name: 'Nitro Coffee',
+    image: require('../../assets/coffees/pexels-adriannacalvo-23384623.jpg'),
+    price: '4.00',
+    description:
+      'El nitro coffee es un café frío infundido con nitrógeno, ofreciendo una textura cremosa y única.',
+    categoryId: 9,
+    rating: 4.6,
+    included: 'Con infusión de nitrógeno',
+  },
+  {
+    id: 12,
+    name: 'Affogato',
+    image: require('../../assets/coffees/pexels-franco-monsalvo-252430633-17506132.jpg'),
+    price: '5.50',
+    description:
+      'El affogato combina espresso caliente servido sobre una bola de helado de vainilla.',
+    categoryId: 10,
+    rating: 5.0,
+    included: 'Helado de vainilla',
+  },
+  {
+    id: 13,
+    name: 'Irish Coffee',
+    image: require('../../assets/coffees/pexels-cottonbro-4667110.jpg'),
+    price: '6.00',
+    description:
+      'El Irish coffee es una bebida caliente que combina café, whisky irlandés y azúcar, coronado con crema.',
+    categoryId: 11,
+    rating: 4.7,
+    included: 'Con whisky irlandés',
+  },
+  {
+    id: 14,
+    name: 'Mocha Frappe',
+    image: require('../../assets/coffees/pexels-rodrigo-ortega-2044210904-29206570.jpg'),
+    price: '4.25',
+    description:
+      'El mocha frappe es una bebida fría hecha con café, leche, chocolate y hielo, mezclados hasta obtener una textura cremosa.',
+    categoryId: 3,
+    rating: 4.8,
+    included: 'Con crema batida y chispas de chocolate',
   },
 ];
