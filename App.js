@@ -6,6 +6,7 @@ import colors from './app/config/colors';
 import HomeScreens from './app/screens/HomeScreens';
 import CoffeeDetailsScreen from './app/screens/CoffeeDetailsScreen';
 import CartScreen from './app/screens/CartScreen';
+import AddressesScreen from './app/screens/AddressesScreen';
 import { CartProvider } from './app/context/CartContext';
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ const App = () => {
           <Stack.Screen name="Home" component={HomeScreens} />
           <Stack.Screen name="CoffeeDetails" component={CoffeeDetailsScreen} />
           <Stack.Screen name="Cart" component={CartScreen} />
+          <Stack.Screen name="Addresses" component={AddressesScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </CartProvider>
