@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,38 +19,55 @@ const avatar = require('../../assets/avatar.png');
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.75;
 
-const CustomDrawer = ({ isVisible, onClose }) => {
+const MENU_ITEMS = [
+  { icon: 'person-outline', label: 'Perfil', screen: 'Profile' },
+  { icon: 'heart-outline', label: 'Favoritos', screen: 'Favorites' },
+  {
+    icon: 'time-outline',
+    label: 'Historial de Pedidos',
+    screen: 'OrderHistory',
+  },
+  { icon: 'card-outline', label: 'Métodos de Pago', screen: 'PaymentMethods' },
+  { icon: 'location-outline', label: 'Direcciones', screen: 'Addresses' },
+  { icon: 'settings-outline', label: 'Configuración', screen: 'Settings' },
+  { icon: 'help-circle-outline', label: 'Ayuda', screen: 'Help' },
+];
+
+const CustomDrawer = ({
+  isVisible,
+  onClose,
+  userName = 'Usuario',
+  userEmail = 'usuario@email.com',
+}) => {
   const navigation = useNavigation();
   const [translateX] = React.useState(new Animated.Value(-DRAWER_WIDTH));
   const [overlayOpacity] = React.useState(new Animated.Value(0));
+  const menuPressAnimation = React.useRef(new Animated.Value(1)).current;
+  const logoutPressAnimation = React.useRef(new Animated.Value(1)).current;
 
-  const userName = 'Juan Pérez'; // Esto puede venir de un estado o props
-  const userEmail = 'juanperez123'; // Lo mismo para el email o username
-
-  React.useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      'hardwareBackPress',
-      handleBackPress
-    );
-
-    return () => backHandler.remove();
-  }, [isVisible]);
-
-  const handleBackPress = () => {
+  const handleBackPress = useCallback(() => {
     if (isVisible) {
       closeDrawer();
       return true;
     }
     return false;
-  };
+  }, [isVisible]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress
+    );
+    return () => backHandler.remove();
+  }, [handleBackPress]);
+
+  useEffect(() => {
     if (isVisible) {
       openDrawer();
     }
   }, [isVisible]);
 
-  const openDrawer = () => {
+  const openDrawer = useCallback(() => {
     Animated.parallel([
       Animated.timing(translateX, {
         toValue: 0,
@@ -63,9 +80,9 @@ const CustomDrawer = ({ isVisible, onClose }) => {
         useNativeDriver: true,
       }),
     ]).start();
-  };
+  }, [translateX, overlayOpacity]);
 
-  const closeDrawer = () => {
+  const closeDrawer = useCallback(() => {
     Animated.parallel([
       Animated.timing(translateX, {
         toValue: -DRAWER_WIDTH,
@@ -80,29 +97,50 @@ const CustomDrawer = ({ isVisible, onClose }) => {
     ]).start(() => {
       onClose();
     });
-  };
+  }, [translateX, overlayOpacity, onClose]);
 
-  const handleOverlayPress = () => {
+  const handleOverlayPress = useCallback(() => {
     closeDrawer();
-  };
+  }, [closeDrawer]);
 
-  const menuItems = [
-    { icon: 'person-outline', label: 'Perfil', screen: 'Profile' },
-    { icon: 'heart-outline', label: 'Favoritos', screen: 'Favorites' },
-    {
-      icon: 'time-outline',
-      label: 'Historial de Pedidos',
-      screen: 'OrderHistory',
+  const handleMenuPress = useCallback(
+    screen => {
+      Animated.sequence([
+        Animated.timing(menuPressAnimation, {
+          toValue: 0.9,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(menuPressAnimation, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        closeDrawer();
+        navigation.navigate(screen);
+      });
     },
-    {
-      icon: 'card-outline',
-      label: 'Métodos de Pago',
-      screen: 'PaymentMethods',
-    },
-    { icon: 'location-outline', label: 'Direcciones', screen: 'Addresses' },
-    { icon: 'settings-outline', label: 'Configuración', screen: 'Settings' },
-    { icon: 'help-circle-outline', label: 'Ayuda', screen: 'Help' },
-  ];
+    [navigation, closeDrawer, menuPressAnimation]
+  );
+
+  const handleLogout = useCallback(() => {
+    Animated.sequence([
+      Animated.timing(logoutPressAnimation, {
+        toValue: 0.95,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(logoutPressAnimation, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      closeDrawer();
+      // Aquí iría la lógica de cierre de sesión
+    });
+  }, [closeDrawer, logoutPressAnimation]);
 
   if (!isVisible) return null;
 
@@ -118,57 +156,26 @@ const CustomDrawer = ({ isVisible, onClose }) => {
 
       <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
         <BlurView intensity={95} tint="dark" style={styles.blurContainer}>
-          {/* Header con botón de cierre */}
           <View style={styles.header}>
             <View style={styles.profileSection}>
               <View style={styles.avatarContainer}>
                 <BlurView intensity={80} style={styles.avatar}>
-                  <Image
-                    style={{
-                      height: '100%',
-                      width: '100%',
-                      borderRadius: SPACING,
-                    }}
-                    source={avatar}
-                  />
+                  <Image style={styles.avatarImage} source={avatar} />
                 </BlurView>
               </View>
               <View style={styles.profileInfo}>
                 <Text style={styles.userName}>{userName}</Text>
-                {/* Nombre y Apellido dinámico */}
                 <Text style={styles.userEmail}>{userEmail}</Text>
-                {/* Nombre de usuario dinámico */}
               </View>
             </View>
           </View>
 
-          {/* Menu Items con efecto de presión */}
           <View style={styles.menuItems}>
-            {menuItems.map((item, index) => (
+            {MENU_ITEMS.map(item => (
               <TouchableOpacity
-                key={index}
+                key={item.screen}
                 style={styles.menuItem}
-                onPress={() => {
-                  // Aquí haces la animación y luego navegas
-                  Animated.sequence([
-                    Animated.timing(new Animated.Value(1), {
-                      toValue: 0.9,
-                      duration: 100,
-                      useNativeDriver: true,
-                    }),
-                    Animated.timing(new Animated.Value(0.9), {
-                      toValue: 1,
-                      duration: 100,
-                      useNativeDriver: true,
-                    }),
-                  ]).start(() => {
-                    closeDrawer();
-                    // Navegación a la pantalla correspondiente
-                    if (item.screen === 'Addresses') {
-                      navigation.navigate('Addresses'); // Navegar a la pantalla de direcciones
-                    }
-                  });
-                }}
+                onPress={() => handleMenuPress(item.screen)}
               >
                 <Ionicons
                   name={item.icon}
@@ -180,27 +187,7 @@ const CustomDrawer = ({ isVisible, onClose }) => {
             ))}
           </View>
 
-          {/* Footer con animación en el botón */}
-          <TouchableOpacity
-            style={styles.logoutButton}
-            onPress={() => {
-              Animated.sequence([
-                Animated.timing(new Animated.Value(1), {
-                  toValue: 0.95,
-                  duration: 100,
-                  useNativeDriver: true,
-                }),
-                Animated.timing(new Animated.Value(0.95), {
-                  toValue: 1,
-                  duration: 100,
-                  useNativeDriver: true,
-                }),
-              ]).start(() => {
-                closeDrawer();
-                // Aquí iría la lógica de cierre de sesión
-              });
-            }}
-          >
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
             <Ionicons
               name="log-out-outline"
               size={SPACING * 2}
@@ -267,12 +254,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  avatarImage: {
+    height: '100%',
+    width: '100%',
+    borderRadius: SPACING,
+  },
   profileInfo: {
     flex: 1,
     marginLeft: SPACING * 2,
-  },
-  closeButton: {
-    padding: SPACING,
   },
   userName: {
     color: colors.white,
