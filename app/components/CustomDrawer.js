@@ -8,14 +8,18 @@ import {
   Dimensions,
   StyleSheet,
   BackHandler,
+  Alert,
 } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { signOut } from 'firebase/auth';
+import { auth } from '../lib/firebaseConfig';
+import { useAuth } from '../context/AuthContext';
 import colors from '../config/colors';
 import SPACING from '../config/SPACING';
 
-const avatar = require('../../assets/avatar.png');
+const placeholderAvatar = require('../../assets/avatar.png');
 const { width } = Dimensions.get('window');
 const DRAWER_WIDTH = width * 0.75;
 
@@ -33,17 +37,23 @@ const MENU_ITEMS = [
   { icon: 'help-circle-outline', label: 'Ayuda', screen: 'Help' },
 ];
 
-const CustomDrawer = ({
-  isVisible,
-  onClose,
-  userName = 'Usuario',
-  userEmail = 'usuario@email.com',
-}) => {
+const CustomDrawer = ({ isVisible, onClose }) => {
   const navigation = useNavigation();
+  const { user } = useAuth();
   const [translateX] = React.useState(new Animated.Value(-DRAWER_WIDTH));
   const [overlayOpacity] = React.useState(new Animated.Value(0));
   const menuPressAnimation = React.useRef(new Animated.Value(1)).current;
   const logoutPressAnimation = React.useRef(new Animated.Value(1)).current;
+
+  // Obtener información completa del usuario desde Firestore
+  const userFirstName =
+    user?.displayName?.split(' ')[0] || user?.firstName || '';
+  const userLastName =
+    user?.displayName?.split(' ').slice(1).join(' ') || user?.lastName || '';
+  const userFullName =
+    user?.displayName || `${userFirstName} ${userLastName}`.trim() || 'Usuario';
+  const userEmail = user?.email || '';
+  const userPhotoURL = user?.photoURL || user?.profileImage;
 
   const handleBackPress = useCallback(() => {
     if (isVisible) {
@@ -125,22 +135,27 @@ const CustomDrawer = ({
   );
 
   const handleLogout = useCallback(() => {
-    Animated.sequence([
-      Animated.timing(logoutPressAnimation, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(logoutPressAnimation, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      closeDrawer();
-      // Aquí iría la lógica de cierre de sesión
-    });
-  }, [closeDrawer, logoutPressAnimation]);
+    Alert.alert('Cerrar Sesión', '¿Estás seguro que deseas cerrar sesión?', [
+      {
+        text: 'Cancelar',
+        style: 'cancel',
+      },
+      {
+        text: 'Sí, cerrar sesión',
+        onPress: async () => {
+          try {
+            await signOut(auth);
+            closeDrawer();
+          } catch (error) {
+            Alert.alert(
+              'Error',
+              'No se pudo cerrar sesión. Intente nuevamente.'
+            );
+          }
+        },
+      },
+    ]);
+  }, [closeDrawer]);
 
   if (!isVisible) return null;
 
@@ -160,11 +175,16 @@ const CustomDrawer = ({
             <View style={styles.profileSection}>
               <View style={styles.avatarContainer}>
                 <BlurView intensity={80} style={styles.avatar}>
-                  <Image style={styles.avatarImage} source={avatar} />
+                  <Image
+                    source={
+                      userPhotoURL ? { uri: userPhotoURL } : placeholderAvatar
+                    }
+                    style={styles.avatarImage}
+                  />
                 </BlurView>
               </View>
               <View style={styles.profileInfo}>
-                <Text style={styles.userName}>{userName}</Text>
+                <Text style={styles.userName}>{userFullName}</Text>
                 <Text style={styles.userEmail}>{userEmail}</Text>
               </View>
             </View>
@@ -255,9 +275,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarImage: {
-    height: '100%',
     width: '100%',
-    borderRadius: SPACING,
+    height: '100%',
+    borderRadius: SPACING * 3,
   },
   profileInfo: {
     flex: 1,
