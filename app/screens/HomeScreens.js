@@ -18,9 +18,10 @@ import Categories from '../components/Categories';
 import coffees from '../config/coffees';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import CustomDrawer from '../components/CustomDrawer';
 
-const avatar = require('../../assets/avatar.png');
+const placeholderAvatar = require('../../assets/avatar.png');
 const { width } = Dimensions.get('window');
 
 const HomeScreens = () => {
@@ -28,7 +29,10 @@ const HomeScreens = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  const userPhotoURL = user?.photoURL;
 
   const filterCoffees = () => {
     return coffees.filter(coffee => {
@@ -48,15 +52,16 @@ const HomeScreens = () => {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
+          {/* Menú */}
           <TouchableOpacity
             style={{
-              borderRadius: SPACING.radius,
+              borderRadius: SPACING,
               overflow: 'hidden',
               width: SPACING * 4,
               height: SPACING * 4,
-              borderRadius: SPACING,
             }}
             onPress={() => setIsMenuVisible(true)}
           >
@@ -74,26 +79,60 @@ const HomeScreens = () => {
               />
             </BlurView>
           </TouchableOpacity>
-          <View
-            style={{
-              width: SPACING * 4,
-              height: SPACING * 4,
-              overflow: 'hidden',
-              borderRadius: SPACING,
-            }}
-          >
-            <BlurView style={{ height: '100%', padding: SPACING / 2 }}>
-              <Image
+
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {/* Carrito */}
+            <TouchableOpacity
+              style={{
+                borderRadius: SPACING,
+                overflow: 'hidden',
+                width: SPACING * 4,
+                height: SPACING * 4,
+                marginRight: SPACING,
+              }}
+              onPress={() => navigation.navigate('Cart')}
+            >
+              <BlurView
                 style={{
                   height: '100%',
-                  width: '100%',
-                  borderRadius: SPACING,
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
-                source={avatar}
-              />
-            </BlurView>
+              >
+                <Ionicons
+                  name="bag-outline"
+                  size={SPACING * 2.5}
+                  color={colors.secondary}
+                />
+              </BlurView>
+            </TouchableOpacity>
+
+            {/* Avatar del usuario */}
+            <TouchableOpacity
+              style={{
+                width: SPACING * 4,
+                height: SPACING * 4,
+                overflow: 'hidden',
+                borderRadius: SPACING,
+              }}
+              onPress={() => navigation.navigate('Profile')}
+            >
+              <BlurView style={{ height: '100%', padding: SPACING / 2 }}>
+                <Image
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    borderRadius: SPACING,
+                  }}
+                  source={
+                    userPhotoURL ? { uri: userPhotoURL } : placeholderAvatar
+                  }
+                />
+              </BlurView>
+            </TouchableOpacity>
           </View>
         </View>
+
         <View style={{ width: '80%', marginVertical: SPACING * 3 }}>
           <Text
             style={{
@@ -241,5 +280,3 @@ const HomeScreens = () => {
 };
 
 export default HomeScreens;
-
-const styles = StyleSheet.create({});
