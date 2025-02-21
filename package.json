@@ -14,10 +14,13 @@
     "expo": "~52.0.20",
     "expo-blur": "~14.0.1",
     "expo-status-bar": "~2.0.0",
+    "firebase": "^11.3.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
     "react-native-safe-area-context": "^5.1.0",
-    "react-native-screens": "^4.5.0"
+    "react-native-screens": "^4.5.0",
+    "@react-native-async-storage/async-storage": "1.23.1",
+    "expo-image-picker": "~16.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
