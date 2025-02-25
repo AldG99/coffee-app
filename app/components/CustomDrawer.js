@@ -42,25 +42,19 @@ const CustomDrawer = ({ isVisible, onClose }) => {
   const { user } = useAuth();
   const [translateX] = React.useState(new Animated.Value(-DRAWER_WIDTH));
   const [overlayOpacity] = React.useState(new Animated.Value(0));
-  const menuPressAnimation = React.useRef(new Animated.Value(1)).current;
-  const logoutPressAnimation = React.useRef(new Animated.Value(1)).current;
 
-  // Obtener información completa del usuario desde Firestore
-  const userFirstName =
-    user?.displayName?.split(' ')[0] || user?.firstName || '';
-  const userLastName =
-    user?.displayName?.split(' ').slice(1).join(' ') || user?.lastName || '';
+  // Get user information
+  const userFirstName = user?.displayName?.split(' ')[0] || '';
+  const userLastName = user?.displayName?.split(' ').slice(1).join(' ') || '';
   const userFullName =
     user?.displayName || `${userFirstName} ${userLastName}`.trim() || 'Usuario';
   const userEmail = user?.email || '';
-  const userPhotoURL = user?.photoURL || user?.profileImage;
+  const userPhotoURL = user?.photoURL;
 
-  const handleBackPress = useCallback(() => {
+  useEffect(() => {
     if (isVisible) {
-      closeDrawer();
-      return true;
+      openDrawer();
     }
-    return false;
   }, [isVisible]);
 
   useEffect(() => {
@@ -71,10 +65,12 @@ const CustomDrawer = ({ isVisible, onClose }) => {
     return () => backHandler.remove();
   }, [handleBackPress]);
 
-  useEffect(() => {
+  const handleBackPress = useCallback(() => {
     if (isVisible) {
-      openDrawer();
+      closeDrawer();
+      return true;
     }
+    return false;
   }, [isVisible]);
 
   const openDrawer = useCallback(() => {
@@ -114,24 +110,19 @@ const CustomDrawer = ({ isVisible, onClose }) => {
   }, [closeDrawer]);
 
   const handleMenuPress = useCallback(
-    screen => {
-      Animated.sequence([
-        Animated.timing(menuPressAnimation, {
-          toValue: 0.9,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-        Animated.timing(menuPressAnimation, {
-          toValue: 1,
-          duration: 100,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        closeDrawer();
-        navigation.navigate(screen);
-      });
+    async screen => {
+      closeDrawer();
+      // Add a small delay to ensure the drawer closes smoothly before navigation
+      setTimeout(() => {
+        try {
+          navigation.navigate(screen);
+        } catch (error) {
+          console.error('Navigation error:', error);
+          Alert.alert('Error', 'No se pudo navegar a la pantalla seleccionada');
+        }
+      }, 300);
     },
-    [navigation, closeDrawer, menuPressAnimation]
+    [navigation, closeDrawer]
   );
 
   const handleLogout = useCallback(() => {
