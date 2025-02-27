@@ -1,70 +1,66 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import {
-  doc,
-  setDoc,
-  getDoc,
-  arrayUnion,
-  arrayRemove,
-  updateDoc,
-} from 'firebase/firestore';
-import { db } from '../lib/firebaseConfig';
-import { useAuth } from './AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FavoritesContext = createContext();
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
-  const { user } = useAuth();
 
-  // Load favorites when user logs in
+  // Cargar los favoritos almacenados al iniciar la app
   useEffect(() => {
     const loadFavorites = async () => {
-      if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists() && userDoc.data().favorites) {
-          setFavorites(userDoc.data().favorites);
+      try {
+        const storedFavorites = await AsyncStorage.getItem('favorites');
+        if (storedFavorites) {
+          setFavorites(JSON.parse(storedFavorites));
         }
+      } catch (error) {
+        console.error('Error al cargar favoritos:', error);
       }
     };
+
     loadFavorites();
-  }, [user]);
+  }, []);
 
-  const toggleFavorite = async coffee => {
-    if (!user) return;
-
-    const userRef = doc(db, 'users', user.uid);
-    const isFavorite = favorites.some(fav => fav.id === coffee.id);
-
-    try {
-      if (isFavorite) {
-        // Remove from favorites
-        await updateDoc(userRef, {
-          favorites: arrayRemove(coffee),
-        });
-        setFavorites(favorites.filter(fav => fav.id !== coffee.id));
-      } else {
-        // Add to favorites
-        await updateDoc(userRef, {
-          favorites: arrayUnion(coffee),
-        });
-        setFavorites([...favorites, coffee]);
+  // Guardar los favoritos cada vez que cambien
+  useEffect(() => {
+    const saveFavorites = async () => {
+      try {
+        await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+      } catch (error) {
+        console.error('Error al guardar favoritos:', error);
       }
-    } catch (error) {
-      console.error('Error updating favorites:', error);
-    }
+    };
+
+    saveFavorites();
+  }, [favorites]);
+
+  // Verificar si un café está en favoritos
+  const isFavorite = coffee => {
+    return favorites.some(fav => fav.id === coffee.id);
   };
 
-  const isFavorite = coffeeId => {
-    return favorites.some(coffee => coffee.id === coffeeId);
+  // Agregar o quitar un café de favoritos
+  const toggleFavorite = coffee => {
+    if (isFavorite(coffee)) {
+      setFavorites(favorites.filter(fav => fav.id !== coffee.id));
+    } else {
+      setFavorites([...favorites, coffee]);
+    }
   };
 
   return (
     <FavoritesContext.Provider
-      value={{ favorites, toggleFavorite, isFavorite }}
+      value={{
+        favorites,
+        isFavorite,
+        toggleFavorite,
+      }}
     >
       {children}
     </FavoritesContext.Provider>
   );
 };
 
+// Hook personalizado para usar el contexto
 export const useFavorites = () => useContext(FavoritesContext);
