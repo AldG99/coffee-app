@@ -24,6 +24,11 @@ import CustomDrawer from '../components/CustomDrawer';
 const placeholderAvatar = require('../../assets/avatar.png');
 const { width } = Dimensions.get('window');
 
+// Definimos un tamaño fijo para las tarjetas de café
+const CARD_WIDTH = width / 2 - SPACING * 2;
+const CARD_HEIGHT = 280; // Altura fija para todas las tarjetas
+const IMAGE_HEIGHT = 150;
+
 const HomeScreens = () => {
   const [activeCategoryId, setActiveCategoryId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -157,79 +162,96 @@ const HomeScreens = () => {
             <View
               key={coffee.id}
               style={{
-                width: width / 2 - SPACING * 2,
-                marginBottom: SPACING,
+                width: CARD_WIDTH,
+                height: CARD_HEIGHT,
+                marginBottom: SPACING * 2,
                 borderRadius: SPACING * 2,
                 overflow: 'hidden',
               }}
             >
-              <BlurView tint="dark" intensity={95} style={{ padding: SPACING }}>
-                <TouchableOpacity
-                  style={{ height: 150, width: '100%' }}
-                  onPress={() =>
-                    navigation.navigate('CoffeeDetails', { coffee })
-                  }
-                >
-                  <Image
-                    source={coffee.image}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: SPACING * 2,
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      right: 0,
-                      borderBottomStartRadius: SPACING * 3,
-                      borderTopEndRadius: SPACING * 2,
-                      overflow: 'hidden',
-                    }}
+              <BlurView
+                tint="dark"
+                intensity={95}
+                style={{
+                  padding: SPACING,
+                  height: '100%',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <View>
+                  <TouchableOpacity
+                    style={{ height: IMAGE_HEIGHT, width: '100%' }}
+                    onPress={() =>
+                      navigation.navigate('CoffeeDetails', { coffee })
+                    }
                   >
-                    <BlurView
-                      tint="dark"
-                      intensity={70}
-                      style={{ flexDirection: 'row', padding: SPACING - 2 }}
+                    <Image
+                      source={coffee.image}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: SPACING * 2,
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        right: 0,
+                        borderBottomStartRadius: SPACING * 3,
+                        borderTopEndRadius: SPACING * 2,
+                        overflow: 'hidden',
+                      }}
                     >
-                      <Ionicons
-                        style={{ marginLeft: SPACING / 2 }}
-                        name="star"
-                        color={colors.primary}
-                        size={SPACING * 1.7}
-                      />
-                      <Text
-                        style={{
-                          color: colors.white,
-                          marginLeft: SPACING / 2,
-                        }}
+                      <BlurView
+                        tint="dark"
+                        intensity={70}
+                        style={{ flexDirection: 'row', padding: SPACING - 2 }}
                       >
-                        {coffee.rating}
-                      </Text>
-                    </BlurView>
+                        <Ionicons
+                          style={{ marginLeft: SPACING / 2 }}
+                          name="star"
+                          color={colors.primary}
+                          size={SPACING * 1.7}
+                        />
+                        <Text
+                          style={{
+                            color: colors.white,
+                            marginLeft: SPACING / 2,
+                          }}
+                        >
+                          {coffee.rating}
+                        </Text>
+                      </BlurView>
+                    </View>
+                  </TouchableOpacity>
+                  <View style={{ height: SPACING * 5 }}>
+                    <Text
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                      style={{
+                        color: colors.white,
+                        fontWeight: '600',
+                        fontSize: SPACING * 1.7,
+                        marginTop: SPACING,
+                        marginBottom: SPACING / 2,
+                      }}
+                    >
+                      {coffee.name}
+                    </Text>
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={{
+                        color: colors.secondary,
+                        fontSize: SPACING * 1.2,
+                      }}
+                    >
+                      {coffee.included}
+                    </Text>
                   </View>
-                </TouchableOpacity>
-                <Text
-                  numberOfLines={2}
-                  style={{
-                    color: colors.white,
-                    fontWeight: '600',
-                    fontSize: SPACING * 1.7,
-                    marginTop: SPACING,
-                    marginBottom: SPACING / 2,
-                  }}
-                >
-                  {coffee.name}
-                </Text>
-                <Text
-                  numberOfLines={1}
-                  style={{ color: colors.secondary, fontSize: SPACING * 1.2 }}
-                >
-                  {coffee.included}
-                </Text>
+                </View>
                 <View
                   style={{
-                    marginVertical: SPACING / 2,
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
